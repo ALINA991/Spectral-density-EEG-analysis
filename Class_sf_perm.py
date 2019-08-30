@@ -7,6 +7,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticD
 from sklearn.neural_network import MLPClassifier
 import pandas as pd
 
+'''author of all functions found in this file : Alina Weinberger'''
+
 def class_clf(files):
     score_clf=[]
     perm_score_clf=[]

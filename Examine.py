@@ -3,6 +3,9 @@ import numpy as np
 import scipy.io
 from sklearn import preprocessing
 
+
+'''author of all functions found in this file : Alina Weinberger'''
+
 def printShape(file_name, nb_subjects, ext):
 
     files=[]

@@ -7,10 +7,11 @@ from sklearn.metrics import accuracy_score
 import FeaturesExtraction
 import Examine
 
+'''author of all functions found in this file : Alina Weinberger'''
+
 
 def rawsamples(file_name, s_len, nb_subjects):
 
-   
 
     '''
     !!! bad channels have to be removed beforehand!!!
@@ -129,7 +130,6 @@ def PSDsamples(file_name, s_len, sfreq, nb_subjects, ext):
         nb_electrodes=len(data)
         
 
-
         if int(points_tot/ points_per_sample) != points_tot/ points_per_sample:         #if impossible to create equal samples
             diff = points_tot/ points_per_sample - int(points_tot/ points_per_sample)
             points_to_remove = diff * points_per_sample
@@ -180,7 +180,7 @@ def PSDsamples(file_name, s_len, sfreq, nb_subjects, ext):
     return samples_PSD_delta, samples_PSD_theta, samples_PSD_alpha, samples_PSD_beta, samples_PSD_lowgamma
 
 
-def avPower(samples_PSD_delta, samples_PSD_theta, samples_PSD_alpha, samples_PSD_beta, samples_PSD_lowgamma):
+def avPowerfromsamples(samples_PSD_delta, samples_PSD_theta, samples_PSD_alpha, samples_PSD_beta, samples_PSD_lowgamma):
 
     av_delta=np.zeros(samples_PSD_delta[0].shape)
     av_theta=np.zeros(samples_PSD_theta[0].shape)
@@ -261,59 +261,6 @@ def printch_nb(file_name, nb_subjects):
 
     print(nb_ch)
 
-def printch_names(file_name, nb_subjects):
-
-    subjects=range(nb_subjects)
-
-    files=[]                #create a list of file names as found in work directory  --> change as needed      
-    for i in subjects:
-        files.append(file_name +str(i)+ '.edf')
-
-    names_ch={}
-
-    for i in subjects:   
-        raw=mne.io.read_raw_edf(files[i])       #importing raw data
-        names_ch[i]=raw.info['ch_names']                #iterate over each subject file
-
-    good_ch_names=[]
-    for a,b,c,d,e,f,g,h,i in zip(names_ch[0],names_ch[1],names_ch[2],names_ch[3],names_ch[4],names_ch[5],names_ch[6],names_ch[7],names_ch[8]):
-        if a in {b,c,d,e,f,g,h,i}:
-            good_ch_names.append(a)
-        
-    
-        #return [[x for x in a if x not in {b,c,d,e,f,g,h,i}]]
-        
-
-def delete_rows(file_name, nb_subjects):
-
-    subjects=range(nb_subjects)
-
-        #channel names --> to remove
-    ch_to_remove=['E3','E8','E10', 'E13', 'E23', 'E36', 'E45', 'E46', 'E47','E56', 'E57', 'E63', 'E70', 'E71', 'E100', 'E102', 'E107', 'E115','STI 014']
-    ch_2_remove=['C3','T7','LM','01','RM']
-
-    idx_to_remove=[]
-
-    files=[]                #create a list of file names as found in work directory      
-    for i in subjects:
-        files.append(file_name +str(i)+ '.edf')
-
-    for i in subjects:   
-        raw=mne.io.read_raw_edf(files[i])       #importing raw data
-        data=raw.get_data()
-
-        for k in range(len(ch_to_remove)):              #get indices of channels from 1st list to remove
-            if ch_to_remove[k] in raw.info['ch_names']:
-                idx_to_remove.append(raw.info['ch_names'].index(ch_to_remove[k]))
-        for k in range(len(ch_2_remove)):               #get indices of channels from 2nd list to remove
-            print(k)
-            if ch_2_remove[k] in raw.info['ch_names']:
-                idx_to_remove.append(raw.info['ch_names'].index(ch_2_remove[k]))
-
-        
-        clean_data=np.delete(data,idx_to_remove,0)              #delete channels
-        np.savetxt('cl_data_DAw'+str(i)+'.edf', clean_data)      #save clean data
-
 
 
 def find_missingch(file_name1, file_name2, nb_subjects):
@@ -358,7 +305,6 @@ def delete_missingch(file_name, ch_to_remove, nb_subjects):
 
     subjects=range(nb_subjects)
    
-
     for i in subjects: 
 
         raw=mne.io.read_raw_edf(file_name +str(i) +'.edf')
@@ -475,20 +421,6 @@ def diff_per_subject(liste1, liste2):
 
     return liste_diff
 
-def diff_per_subject1(liste1, liste2):
-
-    for i in range(len(liste1)):
-        for j in range(liste1[i].shape[0]):
-            row1=liste1[i][j]
-            row2=liste2[i][j]
-            for k in range(len(row1)):               #get difference for each value of array
-                row_diff.append((row1[k]-row2[k]))
-            array_diff[j] = row_diff
-            row_diff=[]
-        liste_diff.append(array_diff)
-        array_diff=[]
-
-    return liste_diff
 
 def diff_per_subject2(list1, list2):
 

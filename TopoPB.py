@@ -13,6 +13,8 @@ import scipy
 import TopoPB 
 
 
+'''author of all function found in this file (except if specified otherwise): Alina Weinberger'''
+
 
 def avPowerband(file_name, nb_subjects, ext):
 
@@ -138,123 +140,6 @@ def avPowerband_sub(data):
 
     return av_delta, av_theta, av_alpha,  av_beta, av_lowgamma
 
-def plotTopo(list1,list2, list3, label1,label2, label3, data_type):
-
-        #delta, theta, alpha, beta, lowgamma 
-
-    if data_type == 'DA':
-        ch2rem= CreateSamples.find_missingch('data_DA','data_DAw', 9 )   #get channels to remove
-        idx2rem=[] 
-        
-        montage=mne.channels.read_montage('GSN-HydroCel-128') #get electrode postition from standard 128 Electrical Geodesics EEG
-
-        for k in range(len(ch2rem)):    #get indexes of removed channellen(s in data
-            if ch2rem[k] in montage.ch_names: 
-                idx2rem.append(montage.ch_names.index(ch2rem[k]))
-
-        sensors_pos1=montage.get_pos2d()[3:]
-        sensors_pos1=np.delete(sensors_pos1, idx2rem, axis=0)
-        sensors_pos2=np.load('elect_DA_new.npy')
-        
-    elif data_type == 'LA':
-        sensors_pos1= np.load('elect_pos_LA.npy')
-        sensors_pos2=sensors_pos1
-
-    elif data_type == 'mixed':
-        sensors_pos1= np.load('elect_pos_LA.npy')  #get electrodes position for light anesths
-        sensors_pos2= np.load('elect_DA_new.npy')    #get interpolated electrodes postion for deep anesthst 
-
-    
-    list_diff=[]
-    for i in range(len(list1)):
-        list_diff.append(list2[i]-list1[i])
-
-    '''
-    montage.pos=np.delete(montage.pos, idx2rem, axis=0)    #delete bad channel positions
-    montage.ch_names=np.delete(montage.ch_names, idx2rem, axis=0)   #delete bad channel names
-    ch_names_info=montage.ch_names[3:]
-    '''
-        #plot topomaps
-  
-   
-    plt.suptitle('Average Power Bands' ) 
-
-    plt.subplot(4,7,1, frameon= False)
-    plt.annotate(label1, xy=(0.5,0.5))
-    plt.subplot(4,7,2)
-    mne.viz.plot_topomap(list1[0],sensors_pos1, vmin=-1, vmax=1, cmap='coolwarm')
-    plt.title('Delta')  #2-4 Hz
-    plt.subplot(4,7,3)
-    mne.viz.plot_topomap(list1[1],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Theta')  #5-7 Hz
-    plt.subplot(4,7,4)
-    mne.viz.plot_topomap(list1[2],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Alpha')  #8-13 Hz
-    plt.subplot(4,7,5)
-    mne.viz.plot_topomap(list1[3],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Beta')   #13-30
-    plt.subplot(4,7,6)
-    mne.viz.plot_topomap(list1[4],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Low Gamma')  #30-50
-
-    plt.subplot(4,7,8,frameon= False)
-    plt.annotate(label2, xy=(0.5,0.5))
-    plt.subplot(4,7,9)
-    mne.viz.plot_topomap(list2[0],sensors_pos2, vmin=-1, vmax=1, cmap='coolwarm')
-    plt.title('Delta')  #2-4 Hz
-    plt.subplot(4,7,10)
-    mne.viz.plot_topomap(list2[1],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Theta')  #5-7 Hz
-    plt.subplot(4,7,11)
-    mne.viz.plot_topomap(list2[2],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Alpha')  #8-13 Hz
-    plt.subplot(4,7,12)
-    mne.viz.plot_topomap(list2[3],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Beta')   #13-30
-    plt.subplot(4,7,13)
-    mne.viz.plot_topomap(list2[4],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Low Gamma')  #30-50
-
-    plt.subplot(4,7,15,frameon= False)
-    plt.annotate(label1 +'-'+label2, xy=(0.5,0.5)) #,plt.delaxes(ax2)? 
-    plt.subplot(4,7,16)
-    mne.viz.plot_topomap(list_diff[0],sensors_pos2, vmin=-1, vmax=1, cmap='coolwarm')
-    plt.title('Delta')  #2-4 Hz
-    plt.subplot(4,7,17)
-    mne.viz.plot_topomap(list_diff[1],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Theta')  #5-7 Hz
-    plt.subplot(4,7,18)
-    mne.viz.plot_topomap(list_diff[2],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Alpha')  #8-13 Hz
-    plt.subplot(4,7,19)
-    mne.viz.plot_topomap(list_diff[3],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Beta')   #13-30
-    plt.subplot(4,7,20)
-    mne.viz.plot_topomap(list_diff[4],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Low Gamma')  #30-50
-
-
-    plt.subplot(4,7,22,frameon= False)
-    plt.annotate(label3, xy=(0.5,0.5)) #,plt.delaxes(ax2)? 
-    plt.subplot(4,7,23)
-    mne.viz.plot_topomap(list3[0],sensors_pos2, vmin=-1, vmax=1, cmap='coolwarm')
-    plt.title('Delta')  #2-4 Hz
-    plt.subplot(4,7,24)
-    mne.viz.plot_topomap(list3[1],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Theta')  #5-7 Hz
-    plt.subplot(4,7,25)
-    mne.viz.plot_topomap(list3[2],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Alpha')  #8-13 Hz
-    plt.subplot(4,7,26)
-    mne.viz.plot_topomap(list3[3],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Beta')   #13-30
-    plt.subplot(4,7,27)
-    mne.viz.plot_topomap(list3[4],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
-    plt.title('Low Gamma')  #30-50
-
-    plt.colorbar()
-
-    plt.show(block=False)
 
 
 def interp_elect_pos(elect_file_small, elect_file_big):
@@ -330,8 +215,10 @@ def interp_data2(elect_big, elect_small, list_big):
 # mindist = np.min(spatial.distance.cdist(elect_LA, elect_DA), axis=1) 
 
 
-
 def array_topoplot(toplot, ch_xy, cmap='coolwarm', showtitle=False, titles=None, savefig=False, figpath=None, vmin=-3, vmax=3):
+
+    '''author: Yann Harel'''
+
     #create fig
     fig, ax = plt.subplots(len(toplot),1, figsize=(20,10))
     #create a topomap for each data array
@@ -353,6 +240,9 @@ def array_topoplot(toplot, ch_xy, cmap='coolwarm', showtitle=False, titles=None,
     return fig, ax
 
 def plot_dec_accu(DA=[],sensors_pos=[],mask=False,DA_thr=None,save_file=None, vmin=-3, vmax=3):
+
+    '''author : Tarek Lajnef'''
+
     if mask:
         mask_default = np.full((len(DA)), False, dtype=bool)
         mask = np.array(mask_default)
